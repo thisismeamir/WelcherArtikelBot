@@ -12,12 +12,10 @@ class database:
      def __
 
      # Action: Executes the Action given as argument.
-     def action(self, ACT=""):
-
-          cursor = self.Connection.cursor()
-
-          cursor.execute(ACT)
-
+     def action(self, ACT:list):
+          for action in ACT:
+               cursor = self.Connection.cursor()
+               cursor.execute(action)
           print(f"{self.Name} has been successfully updated.")
           
 
