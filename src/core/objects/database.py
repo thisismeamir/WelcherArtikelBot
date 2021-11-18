@@ -1,17 +1,29 @@
+# Imports
 import sqlite3 as sql
-
 from sqlite3.dbapi2 import connect
 
 
+# This is the class database,which we will use to talk to our databases 
+# without being worried about SQL library itself
+# When you create an instance of this class you have to give it a name
+# Then you have to run the Initializing method on it
+# After That,you just need to use the action method to execute the commands you want
+# just pass the method all the commands you want to run in order in a list
 class database:
 
-     def __init__(self,name:str):
 
+     def __init__(self,name:str, init= False):
           self.Name = name
+          if init:
+               self.Initializing()
+          else:
+               pass
           
-     def __
+
+
 
      # Action: Executes the Action given as argument.
+     # This method will be separated once the code is bigger.
      def action(self, ACT:list):
           for action in ACT:
                cursor = self.Connection.cursor()
@@ -19,17 +31,31 @@ class database:
           print(f"{self.Name} has been successfully updated.")
           
 
-     # Initialize the database (creates or connects the database)
 
-     def initializing(self):
-          self.Connection = sql.connect(f"src\databases\{self.Name}.db")
+     # Initialize the database (creates or connects the database)
+     def Initializing(self):
+          self.Connection = sql.connect("src\databases\{0}.db".format(self.Name))
+
 
      # Commiting db changes
+
      def CommitChanges(self):
+
           self.Connection.commit()
           
+
      # Closing db
+
      def closing(self):
+
           self.Connection.close()
-          
-testingdb = database("testingdb")
+
+testingdb = database("starting")
+testingdb.Initializing()
+testingdb.action(["""
+                  CREATE TABLE customers (
+             first_name  text,
+             last_name text,
+             email text
+                    )
+                  """])
