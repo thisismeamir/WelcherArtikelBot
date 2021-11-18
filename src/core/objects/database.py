@@ -21,16 +21,24 @@ class database:
           
 
 
-
+     ######################################################################
      # Action: Executes the Action given as argument.
      # This method will be separated once the code is bigger.
-     def action(self, ACT:list):
+     def Action(self, ACT:list):
           for action in ACT:
                cursor = self.Connection.cursor()
                cursor.execute(action)
           print(f"{self.Name} has been successfully updated.")
-          
-
+     
+     # Action: CREATES TABLE
+     def CreateTable(self, tableName:str, columns:list):
+          columnWriter = ""
+          for column in columns:
+               columnWriter = ColumnWriter + ",\n"  column['name'] " " column['type']
+          self.Action([f""" CREATE TABLE {tableName} (
+                      {columnWriter}
+                      ) """])
+     ######################################################################
 
      # Initialize the database (creates or connects the database)
      def Initializing(self):
@@ -46,7 +54,7 @@ class database:
 
      # Closing db
 
-     def closing(self):
+     def Closing(self):
 
           self.Connection.close()
 
