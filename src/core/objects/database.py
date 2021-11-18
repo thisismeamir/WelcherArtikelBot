@@ -34,7 +34,7 @@ class database:
      def CreateTable(self, tableName:str, columns:list):
           columnWriter = ""
           for column in columns:
-               columnWriter = ColumnWriter + ",\n"  column['name'] " " column['type']
+               columnWriter = ColumnWriter + ",\n" + column['name'] + " " + column['type']
           self.Action([f""" CREATE TABLE {tableName} (
                       {columnWriter}
                       ) """])
