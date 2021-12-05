@@ -13,11 +13,11 @@ from sqlite3.dbapi2 import connect
 
 class database:
 
-    def __init__(self,name:str, init= False):
+    def __init__(self,name:str, init= False, dir=""):
         self.Name = name
         self.Tables = []
         if init:
-            self.Initializing()
+            self.Initializing(dir)
         else:
             pass
           
@@ -56,7 +56,7 @@ class database:
         columnArgument = ""
         for column in COLs:
             columnArgument = columnArgument +  column['name'] + " " + column['type'] + ",\n" 
-        columnArgument = columnArgument[:-3]
+        columnArgument = columnArgument[:-2]
         
         # ACTArgument: The final argument that we will pass Action() 
         ACTArgument = f""" CREATE TABLE IF NOT EXISTS {TABNAME}(
@@ -69,24 +69,92 @@ class database:
 
 
     # Action subMethods: Recieve Table info
-    def TableView (self, TABNAME: str, Ins:str, datas= False):
-        assert TABNANE in self.Tables, "There is no such table here."
+    def View(self, TABNAME:str, Ins = [[],[]]):
+        """This function is used to view A Tables Data, because this method needs to be fetched after executing
+        we didn't use the Action() method in this particular method"""
+        assert len(Ins) == 2, "There is no such table here."
+
+        cursor = self.Connection.cursor()
 
         ACTArgument = ''
-        if Ins == "All" and datas == False:
+        if TABNAME == "All":
+            ACTArgument = f"SELECT name FROM {self.Name} WHERE type='table'"
+        
+        else:
+            if Ins[1] != "null":
+                Where = f"WHERE {Ins[1]}"
+            else: 
+                Where = ""
+            ACTArgument = f"SELECT {Ins[0]} FROM {TABNAME} {Where}"
+
+
+        print(ACTArgument)
+        cursor.execute(ACTArgument)
+        items =  cursor.fetchall()
+        return items
+    
+    # Action subMethods: Adds new Data to Table
+    def Add(self,TABNAME:list, Inputs:list ):
+        """
+        This Method Adds a New Data to the table 
+        """
+        ActionList = []
+        for id,table in enumerate(TABNAME):
+            Values = database.ValuesNumber(len(Inputs[id][0]))
+            ACTArgument = f"INSERT INTO {table} VALUES({Values})"
+            ActionList.append(ACTArgument)
+
+        self.Action(ActionList,Inputs)
+    
+
+
+    # Action subMethods: Updating an existing data in table:
+    def Update(self,TABNAME:list, Set: list, Where:list):
+        assert len(TABNAME) == len(Set) == len(Where), "the three argument shall have the sane length"
+        """
+        Updates a table
+        Set [[
+        {'column': 'columnname', 'setto': 'what to set'},...
+        ],
+        [
+        {'column': 'columnname', 'setto': 'what to set'},...
+        ]...]
+        Where [
+        'Where we should set the ith set of dictionaries in Set',
+        ...
+        ]
+        """
+        ActionList = []
+        for id,table in enumerate(TABNAME):
+            SETArgument = ''
+            for Object in Set[id]:
+                Objsets = f"'{Object['setto']}'"
+                SETArgument = SETArgument +  Object['col'] + " = " + Objsets + ",\n" 
+            SETArgument = SETArgument[:-2]
+
+            ACTArgument = f"""
+                            UPDATE {table}
+                            SET {SETArgument}
+                            WHERE {Where[id]}
+                           """
+            ActionList.append(ACTArgument)
+            self.Action(ActionList)
             
-            
-
-
-
-   
+    # Action subMethods: Delete an existing data in table:
+    def Delete(self, TableWhere: list):
+        ActionList = []
+        for table in TableWhere:
+            ACTArgument = f"DELETE FROM {table['table']} WHERE {table['where']}"
+            ActionList.append(ACTArgument)
+        self.Action(ActionList)
+        
           
     ######################################################################
 
     # Initialize the database (creates or connects the database)
-    def Initializing(self):
+    def Initializing(self,dir):
         """ Initializing the database (basically connecting) """
-        self.Connection = sql.connect(f"..\..\databases\{self.Name}.db")
+        self.Connection = sql.connect(f"..\..\databases\{dir}{self.Name}.db")
         
 
 
@@ -114,9 +182,22 @@ class database:
         return Values
           
                     
-data = database('thenewone2',True)
-data.CreateTable("NewTable", [
+data = database('thedatatable',True)
+data.CreateTable("Jim3",[
+    {'name': 'id', 'type': 'text'},
     {'name': 'name', 'type': 'text'},
-    {'name': 'lastename', 'type': 'text'}
+    {'name': 'phone', 'type': 'real'}
     ])
-
+data.Add(['Jim3'],[[
+    ('1','Hosein',9102906898),
+    ('2','Sarah', 9126272822)
+    ]])
+data.Update(['Jim3'],[[
+    {'col': 'name', 'setto': 'yasamin'}
+    ]],[
+        "name == 'Hosein'"
+        ])
+data.Delete([
+    {'table': 'Jim3','where': "name =='yasamin'"}
+])
+print (data.View('Jim3',['id,name,phone','null']))

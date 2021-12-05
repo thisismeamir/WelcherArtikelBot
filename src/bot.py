@@ -1,7 +1,14 @@
 from dotenv import load_dotenv
 import os
 import telebot
-
+from core.objects import database as db
+Students = db.database('AllStudents',True,'Students\\')
+Students.CreateTable("AllStudentsTable",[
+    {'name': 'id',        'type': 'text'},
+    {'name': 'Name',      'type': 'text'},
+    {'name': 'ClassCode', 'type': 'text'},
+    {'name': 'level',     'type': 'text'}
+])
 
 #----- API KEY importing -----
 load_dotenv()
@@ -21,10 +28,3 @@ if __name__ == '__main__':
      main()
 
 
-
-
-
-
-
-if __name__ == '__main__':
-     main()
