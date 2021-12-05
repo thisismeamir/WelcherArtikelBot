@@ -10,3 +10,9 @@ Students.CreateTable("AllStudentsTable",[
     {'name': 'ClassCode', 'type': 'text'},
     {'name': 'level',     'type': 'text'}
 ])
+Words = db.database('AllWords', True,'Words\\')
+Words.CreateTable("AllWordsTable",[
+    {'name': 'word',     'type': 'text'},
+    {'name': 'Meaning',  'type': 'text'},
+    {'name': 'Artikels', 'type': 'text'}
+])
