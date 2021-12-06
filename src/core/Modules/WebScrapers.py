@@ -42,6 +42,7 @@ class WebscreaperWords:
           List.remove('PLURAL')
           ArtikelListDictionary = []
           Type = {'Name': '','Plural': '','Singular': ''}
+          SaveTemp = []
           for item in List:
                
                if item.isupper():
@@ -50,18 +51,28 @@ class WebscreaperWords:
                     counter = 0
                else:
                     if item.islower():
-                         PlSin = f"{item}"
+                         word = ''
+                         artikel = u"{0}".format(item)
                     else:
-                         PlSin = f"{PlSin} {item}"
+                         word = u"{0} {1}".format(artikel,item)
                     counter +=1
+               if counter == 2 or counter == 4:
+                    SaveTemp.append(word)
+               if counter == 4:
+                    Type['Name']     = Name
+                    Type['Singular'] = SaveTemp[0]
+                    Type['Plural']   = SaveTemp[1]
                     ArtikelListDictionary.append(Type)
+                    Type = {'Name': '','Plural': '','Singular': ''}
+                    SaveTemp = []
+                    counter = 0
+
           return ArtikelListDictionary
                
 
                     
           
                
-word = WebscreaperWords("Blau")
+word = WebscreaperWords("apfel")
 word.Scraper()
 word.InfoExtractor()
-print (word.ArtikelTable)
