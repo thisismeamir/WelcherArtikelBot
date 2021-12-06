@@ -1,18 +1,22 @@
+import requests # For Web scraping 
+
 class word:
      Artikels = ['der','die','das']
      def __init__(self, text:str, Word = "" , ListOfArtikel=[] ):
-          self.text = text
+          self.text = word.WordBigFirstLetter(text)
           
+          
+     ################################
+     ################################
      
-     # Artikel Finders
-     def WebScraperArtikel(self):
-          textChecker = self.text
-          
-          
+     ################################
+     # Static methods
 
-     def DatabaseArtikels(self):
-          pass
+               
      
+     ################################
+     
+                            
 class verb:
      def __init__(self, text:str):
           pass
