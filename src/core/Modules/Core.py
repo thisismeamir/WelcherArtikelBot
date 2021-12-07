@@ -1,6 +1,6 @@
 
 def UmlautCorrectors(text:str):
-     return text.replace('Ã\x84', 'Ä').replace("Ã\x9f" ,'ß').replace("Ã¼",'ü').replace("Ã¤",'ä').replace("Ã¶",'ö').replace('Ã\x9c','Ü').replace('Ã\x96','Ö')
+     return text.replace('Ã\x84', 'Ä').replace("Ã\x9f" ,'ß').replace("Ã¼",'ü').replace("Ã¤",'ä').replace("Ã¶",'ö').replace('Ã\x9c','Ü').replace('Ã\x96','Ö').replace('â\x80\x89/â\x80\x89', '/')
 
 def WordBigFirstLetter(text):
      if text[0].isupper():

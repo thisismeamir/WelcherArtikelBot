@@ -30,12 +30,6 @@ class WebScraperWords:
      
      def InfoExtractor(self):
           soup = bs(self.Html, 'lxml')
-          Meaning = soup.find('h3', class_="mb-5").find('span', class_="")
-          if type(Meaning) == None:
-               Meaning.text
-               self.Meaning = Meaning.split(' ')[-1]
-          else:
-               self.Meaning = 'Meaning Not Found'
           ArtikelTable = soup.find('table',class_='table').text.replace("\n"," ").split(" ")
           self.ArtikelTable = [x for x in ArtikelTable if x!='']
           self.ArtikelTable = WebScraperWords.ArtikelDictionary(self.ArtikelTable)
@@ -45,7 +39,7 @@ class WebScraperWords:
           List.remove('SINGULAR')
           List.remove('PLURAL')
           ArtikelListDictionary = []
-          Type = {'Name': '','Plural': '','Singular': ''}
+          Type = {'Name': '','Singular': '','Plural': ''}
           SaveTemp = []
           for item in List:
                if item.isupper():
@@ -56,6 +50,9 @@ class WebScraperWords:
                     if item.islower():
                          word = ''
                          artikel = f"{item}"
+                    elif item == "-":
+                         counter += 1
+                         word = "-"
                     else:
                          word = Uml(f"{artikel} {item}")
                     counter +=1
@@ -66,7 +63,7 @@ class WebScraperWords:
                     Type['Singular'] = SaveTemp[0]
                     Type['Plural']   = SaveTemp[1]
                     ArtikelListDictionary.append(Type)
-                    Type = {'Name': '','Plural': '','Singular': ''}
+                    Type = {'Name': '','Singular': '','Plural': ''}
                     SaveTemp = []
                     counter = 0
           return ArtikelListDictionary
@@ -77,4 +74,7 @@ class WebScraperVerbs:
      pass
                     
           
+               
+                    
+word = WebScraperWords('Obst')
                

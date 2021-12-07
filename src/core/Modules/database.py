@@ -1,5 +1,6 @@
 # Imports
 import sqlite3 as sql
+import re
 from sqlite3.dbapi2 import connect
 
 
@@ -69,7 +70,7 @@ class database:
 
 
     # Action subMethods: Recieve Table info
-    def View(self, TABNAME:str, Ins = [[],[]]):
+    def View(self, TABname:str, Ins = [[],[]]):
         """This function is used to view A Tables Data, because this method needs to be fetched after executing
         we didn't use the Action() method in this particular method"""
         assert len(Ins) == 2, "There is no such table here."
@@ -77,7 +78,7 @@ class database:
         cursor = self.Connection.cursor()
 
         ACTArgument = ''
-        if TABNAME == "All":
+        if TABname == "All":
             ACTArgument = f"SELECT name FROM {self.Name} WHERE type='table'"
         
         else:
@@ -85,7 +86,7 @@ class database:
                 Where = f"WHERE {Ins[1]}"
             else: 
                 Where = ""
-            ACTArgument = f"SELECT {Ins[0]} FROM {TABNAME} {Where}"
+            ACTArgument = f"SELECT {Ins[0]} FROM {TABname} {Where}"
 
 
         print(ACTArgument)
@@ -94,12 +95,12 @@ class database:
         return items
     
     # Action subMethods: Adds new Data to Table
-    def Add(self,TABNAME:list, Inputs:list ):
+    def Add(self,TABname:list, Inputs:list ):
         """
         This Method Adds a New Data to the table 
         """
         ActionList = []
-        for id,table in enumerate(TABNAME):
+        for id,table in enumerate(TABname):
             Values = database.ValuesNumber(len(Inputs[id][0]))
             ACTArgument = f"INSERT INTO {table} VALUES({Values})"
             ActionList.append(ACTArgument)
@@ -109,8 +110,8 @@ class database:
 
 
     # Action subMethods: Updating an existing data in table:
-    def Update(self,TABNAME:list, Set: list, Where:list):
-        assert len(TABNAME) == len(Set) == len(Where), "the three argument shall have the sane length"
+    def Update(self,TABname:list, Set: list, Where:list):
+        assert len(TABname) == len(Set) == len(Where), "the three argument shall have the sane length"
         """
         Updates a table
         Set [[
@@ -125,7 +126,7 @@ class database:
         ]
         """
         ActionList = []
-        for id,table in enumerate(TABNAME):
+        for id,table in enumerate(TABname):
             SETArgument = ''
             for Object in Set[id]:
                 Objsets = f"'{Object['setto']}'"
@@ -155,6 +156,7 @@ class database:
     def Initializing(self,dire):
         """ Initializing the database (basically connecting) """
         self.Connection = sql.connect(f"..\..\databases\{dire}{self.Name}.db")
+        self.Connection.create_function("REGEXP", 2, database.regexp)
         
 
 
@@ -180,24 +182,9 @@ class database:
             i += 1
         Values = Values + "?"
         return Values
+    @staticmethod
+    def regexp(expr, item):
+        reg = re.compile(expr)
+        return reg.search(item) is not None
           
                     
-data = database('thedatatable',True)
-data.CreateTable("Jim3",[
-    {'name': 'id', 'type': 'text'},
-    {'name': 'name', 'type': 'text'},
-    {'name': 'phone', 'type': 'real'}
-    ])
-data.Add(['Jim3'],[[
-    ('1','Hosein',9102906898),
-    ('2','Sarah', 9126272822)
-    ]])
-data.Update(['Jim3'],[[
-    {'col': 'name', 'setto': 'yasamin'}
-    ]],[
-        "name == 'Hosein'"
-        ])
-data.Delete([
-    {'table': 'Jim3','where': "name =='yasamin'"}
-])
-print (data.View('Jim3',['id,name,phone','null']))
