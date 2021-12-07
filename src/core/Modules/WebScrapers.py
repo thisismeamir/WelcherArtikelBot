@@ -2,6 +2,7 @@
 import requests
 from bs4 import BeautifulSoup as bs
 from Core import WordBigFirstLetter as Wbfl
+from Core import VerbSmallFirstLetter as Vsfl
 from Core import UmlautCorrectors as Uml
 
 
@@ -71,10 +72,24 @@ class WebScraperWords:
           # Here we will write the code that detects umlaut correctly and changes it accordingly
           
 class WebScraperVerbs:
-     pass
-                    
-          
+     def __init__(self,text):
+          self.text = Vsfl(text)
+          self.Cond = True
+          self.Scraper()
+          if self.Cond == True:
+               self.InfoExtractor()
+     
+     def Scraper(self):
+          Verb = self.text
+          url = f"https://conjugator.reverso.net/conjugation-german.html"
+          if requests.get(url).ok:
+               self.Html = requests.get(url).text
+               print(self.Html)
+          else:
+               print("nah")
+     def InfoExtractor(self):
+          pass
                
                     
-word = WebScraperWords('Obst')
+verb = WebScraperVerbs("haben")
                

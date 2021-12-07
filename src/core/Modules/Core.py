@@ -9,5 +9,10 @@ def WordBigFirstLetter(text):
           text = text[0].upper() + text[1:]
      return text
 
+def VerbSmallFirstLetter(text):
+     if text[0].islower():
+          pass
+     else:
+          text = text[0].lower() + text[1:]
 
 

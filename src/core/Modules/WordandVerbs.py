@@ -48,8 +48,13 @@ class word:
                self.Meaning = "-" # Next Versions
                self.DatabaseSave()
           else:
-               self.Artikel = "No Artikel Found"
-               self.ArtikelTable = []
+               self.Artikel = "-"
+               self.ArtikelTable = [
+                    {'Name': 'NOMINATIV','Singular': '-','Plural': '-'},
+                    {'Name': 'GENITIV','Singular': '-','Plural': '-'},
+                    {'Name': 'DATIV','Singular': '-','Plural': '-'},
+                    {'Name': 'AKKUSATIV','Singular': '-','Plural': '-'}
+               ]
                self.Meaning = "Not found"
                print("Web Scraping was not successful")
      ################################
@@ -96,9 +101,3 @@ class verb:
           pass
      
 
-word = word('Gemüse')
-print(word)
-AllWordDatabase = db('AllWords', True,'Words\\')
-items =  AllWordDatabase.View('AllWordsTable',['*','null'])
-for i in items:
-     print(i)
