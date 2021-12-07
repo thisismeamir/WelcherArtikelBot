@@ -1,15 +1,22 @@
+# -*- coding: utf-8 -*-
 import requests
 from bs4 import BeautifulSoup as bs
+from Core import WordBigFirstLetter as Wbfl
+from Core import UmlautCorrectors as Uml
 
-class WebscreaperWords:
+
+class WebScraperWords:
      def __init__(self,text):
-          self.text = WebscreaperWords.WordBigFirstLetter(text)
+          self.text = Wbfl(text) 
           self.Cond = True
           self.Scraper()
+          if self.Cond == True:
+               self.InfoExtractor()
+          
      
      def Scraper(self):
           Artikels = ['die','das','der']
-          Word = self.text
+          Word = Uml(self.text)
           for artikel in Artikels:
                url = f"https://der-artikel.de/{artikel}/{Word}.html"
                if  requests.get(url).ok:
@@ -23,19 +30,16 @@ class WebscreaperWords:
      
      def InfoExtractor(self):
           soup = bs(self.Html, 'lxml')
-          Meaning = soup.find('h3', class_="mb-5").find('span', class_="").text
-          self.Meaning = Meaning.split(' ')[-1]
+          Meaning = soup.find('h3', class_="mb-5").find('span', class_="")
+          if type(Meaning) == None:
+               Meaning.text
+               self.Meaning = Meaning.split(' ')[-1]
+          else:
+               self.Meaning = 'Meaning Not Found'
           ArtikelTable = soup.find('table',class_='table').text.replace("\n"," ").split(" ")
           self.ArtikelTable = [x for x in ArtikelTable if x!='']
-          self.ArtikelTable = WebscreaperWords.ArtikelDictionary(self.ArtikelTable)
+          self.ArtikelTable = WebScraperWords.ArtikelDictionary(self.ArtikelTable)
           
-     @staticmethod 
-     def WordBigFirstLetter(text):
-          if text[0].isupper():
-               pass
-          else:
-               text = text[0].upper() + text[1:]
-          return text
      @staticmethod
      def ArtikelDictionary(List:list):
           List.remove('SINGULAR')
@@ -44,7 +48,6 @@ class WebscreaperWords:
           Type = {'Name': '','Plural': '','Singular': ''}
           SaveTemp = []
           for item in List:
-               
                if item.isupper():
                     Name = item
                     Type['Name'] = Name
@@ -52,9 +55,9 @@ class WebscreaperWords:
                else:
                     if item.islower():
                          word = ''
-                         artikel = u"{0}".format(item)
+                         artikel = f"{item}"
                     else:
-                         word = u"{0} {1}".format(artikel,item)
+                         word = Uml(f"{artikel} {item}")
                     counter +=1
                if counter == 2 or counter == 4:
                     SaveTemp.append(word)
@@ -66,13 +69,12 @@ class WebscreaperWords:
                     Type = {'Name': '','Plural': '','Singular': ''}
                     SaveTemp = []
                     counter = 0
-
           return ArtikelListDictionary
-               
 
+          # Here we will write the code that detects umlaut correctly and changes it accordingly
+          
+class WebScraperVerbs:
+     pass
                     
           
                
-word = WebscreaperWords("apfel")
-word.Scraper()
-word.InfoExtractor()

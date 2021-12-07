@@ -152,9 +152,9 @@ class database:
     ######################################################################
 
     # Initialize the database (creates or connects the database)
-    def Initializing(self,dir):
+    def Initializing(self,dire):
         """ Initializing the database (basically connecting) """
-        self.Connection = sql.connect(f"..\..\databases\{dir}{self.Name}.db")
+        self.Connection = sql.connect(f"..\..\databases\{dire}{self.Name}.db")
         
 
 
