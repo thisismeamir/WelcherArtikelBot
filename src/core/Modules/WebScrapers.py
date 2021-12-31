@@ -70,7 +70,8 @@ class WebScraperWords:
           return ArtikelListDictionary
 
           # Here we will write the code that detects umlaut correctly and changes it accordingly
-          
+
+# Next Version          
 class WebScraperVerbs:
      def __init__(self,text):
           self.text = Vsfl(text)
@@ -81,7 +82,7 @@ class WebScraperVerbs:
      
      def Scraper(self):
           Verb = self.text
-          url = f"https://conjugator.reverso.net/conjugation-german.html"
+          url = f"https://conjugator.reverso.net/conjugation-german-verb-{Verb}.html"
           if requests.get(url).ok:
                self.Html = requests.get(url).text
                print(self.Html)
@@ -89,7 +90,4 @@ class WebScraperVerbs:
                print("nah")
      def InfoExtractor(self):
           pass
-               
-                    
-verb = WebScraperVerbs("haben")
                

@@ -14,11 +14,11 @@ from sqlite3.dbapi2 import connect
 
 class database:
 
-    def __init__(self,name:str, init= False, dir=""):
+    def __init__(self,name:str, init= False):
         self.Name = name
         self.Tables = []
         if init:
-            self.Initializing(dir)
+            self.Initializing()
         else:
             pass
           
@@ -77,22 +77,24 @@ class database:
 
         cursor = self.Connection.cursor()
 
-        ACTArgument = ''
+        argument = ""
         if TABname == "All":
-            ACTArgument = f"SELECT name FROM {self.Name} WHERE type='table'"
+            argument = f"SELECT name FROM {self.Name} WHERE type='table'"
+            cursor.execute(argument)
+            items =  cursor.fetchall()
+            return items
         
         else:
             if Ins[1] != "null":
                 Where = f"WHERE {Ins[1]}"
             else: 
                 Where = ""
-            ACTArgument = f"SELECT {Ins[0]} FROM {TABname} {Where}"
-
-
-        print(ACTArgument)
-        cursor.execute(ACTArgument)
-        items =  cursor.fetchall()
-        return items
+            argument = f"SELECT {Ins[0]} FROM {TABname} {Where}"
+            print (argument)
+            cursor.execute(argument)
+            items =  cursor.fetchall()
+            return items
+        
     
     # Action subMethods: Adds new Data to Table
     def Add(self,TABname:list, Inputs:list ):
@@ -100,10 +102,16 @@ class database:
         This Method Adds a New Data to the table 
         """
         ActionList = []
+        
         for id,table in enumerate(TABname):
-            Values = database.ValuesNumber(len(Inputs[id][0]))
-            ACTArgument = f"INSERT INTO {table} VALUES({Values})"
-            ActionList.append(ACTArgument)
+            Condition = self.CheckforItem(Inputs[id][0],table)
+            if Condition == False:
+                
+                Values = database.ValuesNumber(len(Inputs[id][0]))
+                ACTArgument = f"INSERT INTO {table} VALUES({Values})"
+                ActionList.append(ACTArgument)
+            else:
+                pass
 
         self.Action(ActionList,Inputs)
     
@@ -148,14 +156,42 @@ class database:
             ACTArgument = f"DELETE FROM {table['table']} WHERE {table['where']}"
             ActionList.append(ACTArgument)
         self.Action(ActionList)
+    
+    def CheckforItem(self, Item, Tablename):
+        SearchThrough = self.GetColumns(Tablename)
+        SearchItem  = Item
+        items = []
+        for col in SearchThrough:
+            for item in SearchItem:
+                if item == "-" or item == 0:
+                    continue
+                else:
+                    print(item)
+                    item = item.split(" ")
+                    item = item[1]
+                    print(item)
+                    items = self.View(Tablename,['*',"{0} REGEXP 'd[a-z][a-z] {1}'".format(col,item)])
+                    if len(items)>0:
+                        Condition = True
+                        print('found')
+                        break
+                    else:
+                        Condition = False
+                        print('not found')
+                        continue
+        return Condition
+            
+    def GetColumns(self,Tablename):
+        cursor = self.Connection.execute(f'select * from {Tablename}')
+        names = list(map(lambda x: x[0], cursor.description))
+        return names
         
-          
     ######################################################################
 
     # Initialize the database (creates or connects the database)
-    def Initializing(self,dire):
+    def Initializing(self):
         """ Initializing the database (basically connecting) """
-        self.Connection = sql.connect(f"..\..\databases\{dire}{self.Name}.db")
+        self.Connection = sql.connect(f"./databases/{self.Name}.db")
         self.Connection.create_function("REGEXP", 2, database.regexp)
         
 
@@ -184,7 +220,9 @@ class database:
         return Values
     @staticmethod
     def regexp(expr, item):
-        reg = re.compile(expr)
-        return reg.search(item) is not None
-          
+        try:
+            reg = re.compile(expr)
+            return reg.search(item) is not None
+        except:
+            return False  
                     

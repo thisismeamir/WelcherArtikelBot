@@ -62,14 +62,16 @@ class word:
      def DatabaseSearch(self):
           searchitem = self.text
           SearchThrough = ['WordTitle','Meaning','NomSin','NomPlu','GenSin','GenPlu','DatSin','DatPlu','AkkSin','AkkPlu']
-          AllWordDatabase = db('AllWords', True,'Words\\')
+          AllWordDatabase = db('AllWords', True)
           items = []
           for col in SearchThrough:
                items = AllWordDatabase.View('AllWordsTable',['*',"{0} REGEXP 'd[a-z][a-z] {1}'".format(col,searchitem)])
                if len(items)>0:
+                    self.Cond = True
                     print('found')
                     break
-               else: 
+               else:
+                    self.Cond = False
                     print('not found')
                     continue
           return items
@@ -80,7 +82,7 @@ class word:
           if self.Cond == True:
 
                At = self.ArtikelTable
-               AllWordDatabase = db('AllWords', True,'Words\\')
+               AllWordDatabase = db('AllWords', True)
                AllWordDatabase.Add(['AllWordsTable'],[[
                     (At[0]['Singular'],"-",At[0]['Singular'],At[0]['Plural'],At[1]['Singular'],At[1]['Plural'],At[2]['Singular'],At[2]['Plural'],At[3]['Singular'],At[3]['Plural'])
                ]])
@@ -100,4 +102,3 @@ class verb:
      def __init__(self, text:str):
           pass
      
-
