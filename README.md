@@ -14,7 +14,7 @@ for installing the codes and using them install these libraries using the pip co
 - requests
 
 # Versions:
-
+- 1.0  : the bot can successfully receives word web scrape or search it in the database and return the values as well in telegram.
 - 0.0.2: Any German Word sent to it will be replied by a message of what artikel it is + sing., plural, dativ...
 - 0.0.1: Signs up and Strudent or a Teacher and Adds Classmates
 
